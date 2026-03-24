@@ -209,4 +209,6 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+.claude/
 >>>>>>> ee15e65 (Initial commit)
