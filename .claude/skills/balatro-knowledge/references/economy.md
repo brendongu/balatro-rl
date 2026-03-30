@@ -1,62 +1,108 @@
 # Economy & Resources
 
-Questions that shape gold-related features in the observation space and
-reward shaping around shop decisions (Phase 3).
+Reference for gold-related features, reward shaping, and shop decision logic.
 
 ---
 
-**Q14: What is the gold economy progression?**
-*(Starting gold, gold per blind, interest mechanics, how much you typically have at each Ante)*
+## Gold Economy Mechanics (Game Data)
 
-*[Your answer here]*
+### Starting Gold
+
+| Deck | Starting Gold |
+|------|--------------|
+| Default (most decks) | $4 |
+| Yellow Deck | $14 (+$10 extra) |
+
+### Round Rewards
+
+After beating a blind, the player earns:
+
+| Reward Type | Amount | Notes |
+|-------------|--------|-------|
+| Small Blind win | $3 | $0 on RED stake and above |
+| Big Blind win | $4 | Always awarded |
+| Boss Blind win | $5 | Always awarded |
+| Interest | floor(gold / 5), max $5 | Paid every round |
+| Remaining hands | Depends on deck | GREEN deck: $2 per remaining hand |
+| Remaining discards | Depends on deck | GREEN deck: $1 per remaining discard |
+
+### Interest Formula
+
+```
+interest = min(floor(current_gold / 5), cap)
+```
+
+- **Base cap**: $5 per round (at $25+ gold, you earn max interest).
+- **Seed Money voucher**: Raises cap to $10 per round.
+- **Money Tree voucher**: Raises cap to $20 per round.
+- **GREEN deck**: No interest. Instead earns $2/hand + $1/discard remaining.
+
+### Gold Sinks
+
+| Sink | Cost | Notes |
+|------|------|-------|
+| Shop cards (Jokers) | $2–$8 (common–rare) | Varies by rarity and edition |
+| Shop consumables | $3–$6 | Tarot, Planet, Spectral |
+| Booster packs | $4–$8 | Standard, Arcana, Celestial, Buffoon, Spectral |
+| Vouchers | $10 (tier 1), $10 (tier 2) | One per shop visit |
+| Reroll shop | $5 (base) | Reduced by Reroll Surplus/Glut vouchers |
+| Rental jokers | $1/round | Ongoing cost |
+
+> **VERIFY**: Exact shop prices vary. These are base prices before voucher
+> discounts (Clearance Sale: -25%, Liquidation: -50%).
 
 ---
 
-**Q15: When should you prioritize economy (saving hands/discards) vs. safety (using all resources)?**
-*(What's the tradeoff and when does it flip?)*
+**Q14: What is the typical gold progression by Ante?**
 
-*[Your answer here]*
+*(How much gold do you typically have at the start of each Ante's shop? What's
+a "rich" run vs "poor" run look like?)*
+
+> **EXPERT**
+
+---
+
+**Q15: When should you prioritize economy (saving hands/discards, banking gold) vs. safety (spending all resources to beat the blind)?**
+
+> **EXPERT**
 
 ---
 
 **Q16: How valuable is each additional hand remaining at end of round?**
-*(In terms of gold via interest, ability to skip small blind, other effects)*
 
-*[Your answer here]*
+From game data: GREEN deck earns $2/hand remaining. Other decks get no direct
+hand-to-gold conversion, but:
+- Fewer hands used → faster round → no direct gold benefit.
+- Saved hands don't carry over between rounds.
+
+> **EXPERT**: Are there indirect benefits (tempo, tag skipping, etc.) that make
+> hand conservation valuable even on non-GREEN decks?
 
 ---
 
-**Q17: When is it ever correct to intentionally lose a blind to preserve resources?**
-*(Is this a real strategy? Under what conditions?)*
+**Q17: When is it ever correct to intentionally lose a blind?**
 
-*[Your answer here]*
+> **EXPERT**
 
 ---
 
 **Q18: What's the typical shop reroll strategy at different Antes?**
-*(When do you reroll freely vs. conserve gold?)*
 
-*[Your answer here]*
-
----
-
-## Interest Mechanics
-
-> Fill in the exact interest formula here once you've answered Q14.
-> This goes directly into the reward function.
-
-```
-Interest = min(floor(gold / 5), cap) per round
-Cap at base stake = $5 (upgradeable via Seed Money / Money Tree vouchers)
-```
-
-*[Confirm or correct the above, add any stake-level changes]*
+> **EXPERT**
 
 ---
 
 ## Economy Features for Observation Space
 
-> Which economy quantities should be in the observation vector?
-> (e.g., current_gold, expected_interest, rounds_until_shop)
+Relevant features (all phases):
 
-*[Your notes here]*
+| Feature | Source | Relevance |
+|---------|--------|-----------|
+| `current_gold` | gamestate.money | Direct purchasing power |
+| `interest_next_round` | min(floor(gold/5), cap) | Opportunity cost of spending |
+| `round_reward` | blind_type + stake | Expected income |
+| `reroll_cost` | gamestate.round.reroll_cost | Shop action cost |
+| `joker_sell_values` | sum of joker sell prices | Emergency liquidity |
+
+For hand-play-only env, gold is not directly relevant (no shop). Include it
+only when shop phase is modeled.

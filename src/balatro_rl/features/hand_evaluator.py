@@ -45,10 +45,9 @@ Card chip values (base, before enhancements):
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, field
-from itertools import combinations
-from typing import Optional
 
+from dataclasses import dataclass
+from itertools import combinations
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -136,9 +135,9 @@ class ParsedCard:
     index: int  # position in hand (0-based), used to call the API
     rank: str  # e.g. "A", "K", "T", "2"
     suit: str  # e.g. "H", "D", "C", "S"
-    enhancement: Optional[str] = None
-    edition: Optional[str] = None
-    seal: Optional[str] = None
+    enhancement: str | None = None
+    edition: str | None = None
+    seal: str | None = None
     debuff: bool = False
     stone: bool = False  # Stone cards have no rank/suit but give +50 chips
 
@@ -348,7 +347,7 @@ def detect_hand_type(cards: list[ParsedCard]) -> tuple[str, list[ParsedCard]]:
 def estimate_chips(
     hand_type: str,
     scoring_cards: list[ParsedCard],
-    hand_levels: Optional[dict[str, int]] = None,
+    hand_levels: dict[str, int] | None = None,
 ) -> tuple[float, int, int, int]:
     """
     Estimate chips × mult for a hand candidate.
@@ -446,7 +445,7 @@ def estimate_chips(
 
 def evaluate_hand(
     hand_cards: list[dict],
-    hand_levels: Optional[dict[str, int]] = None,
+    hand_levels: dict[str, int] | None = None,
     max_candidates: int = 20,
 ) -> list[HandCandidate]:
     """
@@ -502,7 +501,7 @@ def evaluate_hand(
 
 def best_play(
     hand_cards: list[dict],
-    hand_levels: Optional[dict[str, int]] = None,
+    hand_levels: dict[str, int] | None = None,
 ) -> HandCandidate:
     """Return the single best candidate play (by estimated score)."""
     candidates = evaluate_hand(hand_cards, hand_levels)

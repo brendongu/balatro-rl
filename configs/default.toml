@@ -1,0 +1,45 @@
+[env]
+max_steps = 10_000
+reward_shaping = true          # jackdaw's built-in dense reward
+back_keys = ["b_red"]
+stakes = [1]
+
+[reward]
+ante_progress_exp = 1.5
+ante_progress_scale = 0.1
+discard_efficiency_bonus = 0.005
+hand_diversity_penalty = -0.01
+diversity_window = 20
+
+[curriculum]
+enabled = false
+window_size = 100
+start_stage = 0
+
+[curriculum.stages]
+# Each stage: [ante_cap, stake, success_threshold]
+# Stages are ordered; agent auto-promotes when threshold is met
+s1 = { ante_cap = 1, stake = 1, threshold = 0.80, label = "survive_ante_1" }
+s2 = { ante_cap = 3, stake = 1, threshold = 0.60, label = "reach_ante_3" }
+s3 = { ante_cap = 5, stake = 1, threshold = 0.40, label = "reach_ante_5" }
+s4 = { ante_cap = 8, stake = 1, threshold = 0.10, label = "win_white" }
+s5 = { ante_cap = 8, stake = 2, threshold = 0.05, label = "win_red" }
+
+[observation]
+augment = false                # enable ObservationAugmentWrapper
+
+[training]
+algorithm = "MaskablePPO"
+total_timesteps = 500_000
+n_steps = 4096
+learning_rate = 1e-4
+ent_coef = 0.05
+clip_range = 0.15
+seed = 0
+
+[training.tensorboard]
+log_dir = "runs/balatro_ppo"
+
+[evaluate]
+n_episodes = 100
+deterministic = true

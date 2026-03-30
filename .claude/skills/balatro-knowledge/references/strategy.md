@@ -1,39 +1,41 @@
 # Strategy & Risk Management
 
-Questions that shape reward design philosophy and shop decision logic (Phase 3).
+Reference for reward design, shop decision logic, build coherence signals, and
+risk management heuristics.
 
 ---
 
 ## Shop Decisions (Q71–75)
 
 **Q71: How do you prioritize shop purchases?**
-*(Your actual priority order and the reasoning behind it)*
 
-*[Your answer here]*
+*(Your actual priority order and the reasoning behind it.)*
+
+> **EXPERT**
 
 ---
 
 **Q72: When is rerolling worth it vs. saving gold?**
 
-*[Your answer here]*
+> **EXPERT**
 
 ---
 
 **Q73: How does your current gold buffer affect risk tolerance in the shop?**
 
-*[Your answer here]*
+> **EXPERT**
 
 ---
 
 **Q74: When do you skip the shop entirely?**
 
-*[Your answer here]*
+> **EXPERT**
 
 ---
 
 **Q75: How do you decide between buying now vs. waiting for the next shop?**
 
-*[Your answer here]*
+> **EXPERT**
 
 ---
 
@@ -41,34 +43,41 @@ Questions that shape reward design philosophy and shop decision logic (Phase 3).
 
 **Q76: At what point in a run do you "commit" to a build direction?**
 
-*[Your answer here]*
+*(e.g., "by Ante 2 I know if I'm going flush or pairs." What are the signals?)*
+
+> **EXPERT**
 
 ---
 
 **Q77: How do you recognize when a build isn't working and needs to pivot?**
-*(What are the signals?)*
 
-*[Your answer here]*
+> **EXPERT**
 
 ---
 
 **Q78: What are the signs a build will scale well vs. hit a ceiling?**
 
-*[Your answer here]*
+*(Important for reward design: should we reward builds with ×Mult more than
++Mult builds because they scale further?)*
+
+> **EXPERT**
 
 ---
 
 **Q79: When do you hedge (keep build flexible) vs. specialize (all-in on one strategy)?**
 
-*[Your answer here]*
+> **EXPERT**
 
 ---
 
 **Q80: What's the minimum viable build for each Ante?**
 
+*(What does a build need to look like to survive? This defines the "floor" for
+reward shaping.)*
+
 | Ante | Minimum to Survive |
 |------|-------------------|
-| 1 | |
+| 1 | > **EXPERT** |
 | 2–3 | |
 | 4–5 | |
 | 6–8 | |
@@ -78,42 +87,53 @@ Questions that shape reward design philosophy and shop decision logic (Phase 3).
 ## Risk Management (Q81–85)
 
 **Q81: When should you play conservatively vs. aggressively?**
-*(What triggers the switch?)*
 
-*[Your answer here]*
+*(What game-state signals trigger the switch?)*
+
+> **EXPERT**
 
 ---
 
 **Q82: How do you evaluate high-variance strategies?**
-*(e.g., Glass cards, Blueprint — when is the variance worth it?)*
 
-*[Your answer here]*
+*(e.g., Glass cards with 1/4 destruction chance, Lucky cards with 1/5 +20 mult.
+When is the EV worth the variance?)*
+
+> **EXPERT**
 
 ---
 
 **Q83: When is it correct to take a risky Joker that might brick your run?**
 
-*[Your answer here]*
+*(e.g., Madness destroys a random joker for ×0.5 mult. Hex destroys all jokers
+for Polychrome on one. Under what conditions are these +EV?)*
+
+> **EXPERT**
 
 ---
 
 **Q84: Consistent small scaling vs. boom-or-bust — when do you choose each?**
 
-*[Your answer here]*
+> **EXPERT**
 
 ---
 
-**Q85: Which are the "must not lose" blinds where you play extra safe?**
-*(Boss blinds? Specific Antes? Situations?)*
+**Q85: Which blinds/situations are "must not lose" where you play extra safe?**
 
-*[Your answer here]*
+> **EXPERT**
 
 ---
 
-## Reward Shaping Notes
+## Reward Shaping Implications
 
-> After filling in the above, write notes on what these answers imply
-> for the reward function design.
+> After answering the above, note what these answers imply for reward design.
 
-*[Your notes here — e.g., "Q85 suggests boss blind attempts should have a small
-negative reward for using more than X hands, to teach conservative play"]*
+| Expert Insight | Reward Implication |
+|---------------|-------------------|
+| Q76 (build commitment timing) | Reward coherent joker sets more at higher antes |
+| Q78 (scaling signals) | Reward ×Mult acquisition more than +Mult after ante 3 |
+| Q80 (minimum viable build) | Use as threshold for curriculum advancement |
+| Q81 (conservative/aggressive) | Hands_remaining < 2 should trigger risk-averse play |
+| Q85 (must-not-lose blinds) | Boss blinds could have slightly higher loss penalty |
+
+> **EXPERT**: Fill in after answering questions above.

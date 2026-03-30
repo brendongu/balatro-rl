@@ -11,8 +11,6 @@ API endpoint: http://127.0.0.1:12346 (default)
 from __future__ import annotations
 
 import requests
-from typing import Optional
-
 
 # ---------------------------------------------------------------------------
 # Exceptions
@@ -82,7 +80,7 @@ class BalatroClient:
         self._id += 1
         return self._id
 
-    def _call(self, method: str, params: Optional[dict] = None) -> dict:
+    def _call(self, method: str, params: dict | None = None) -> dict:
         payload = {
             "jsonrpc": "2.0",
             "method": method,
@@ -143,7 +141,7 @@ class BalatroClient:
         self,
         deck: str = "RED",
         stake: str = "WHITE",
-        seed: Optional[str] = None,
+        seed: str | None = None,
     ) -> dict:
         """
         Start a new run. Returns gamestate (state=BLIND_SELECT).
@@ -273,7 +271,7 @@ class BalatroClient:
     # Booster Pack (state=SMODS_BOOSTER_OPENED)
     # -----------------------------------------------------------------------
 
-    def pack_select(self, card: int, targets: Optional[list[int]] = None) -> dict:
+    def pack_select(self, card: int, targets: list[int] | None = None) -> dict:
         """
         Select a card from an opened booster pack.
 
@@ -295,7 +293,7 @@ class BalatroClient:
     # Consumable Use (state=SELECTING_HAND or SMODS_BOOSTER_OPENED)
     # -----------------------------------------------------------------------
 
-    def use_consumable(self, index: int, cards: Optional[list[int]] = None) -> dict:
+    def use_consumable(self, index: int, cards: list[int] | None = None) -> dict:
         """
         Use a consumable card.
 
@@ -316,12 +314,12 @@ class BalatroClient:
     def add(
         self,
         key: str,
-        seal: Optional[str] = None,
-        edition: Optional[str] = None,
-        enhancement: Optional[str] = None,
-        eternal: Optional[bool] = None,
-        perishable: Optional[int] = None,
-        rental: Optional[bool] = None,
+        seal: str | None = None,
+        edition: str | None = None,
+        enhancement: str | None = None,
+        eternal: bool | None = None,
+        perishable: int | None = None,
+        rental: bool | None = None,
     ) -> dict:
         """
         Add a card to the game (debug/testing).
@@ -356,13 +354,13 @@ class BalatroClient:
 
     def set(
         self,
-        money: Optional[int] = None,
-        chips: Optional[int] = None,
-        ante: Optional[int] = None,
-        round: Optional[int] = None,
-        hands: Optional[int] = None,
-        discards: Optional[int] = None,
-        shop: Optional[bool] = None,
+        money: int | None = None,
+        chips: int | None = None,
+        ante: int | None = None,
+        round: int | None = None,
+        hands: int | None = None,
+        discards: int | None = None,
+        shop: bool | None = None,
     ) -> dict:
         """
         Set in-game values (debug/testing). Pass only the values to change.

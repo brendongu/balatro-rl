@@ -1,15 +1,45 @@
 [project]
 name = "balatro-rl"
 version = "0.1.0"
-description = "Add your description here"
+description = "Reinforcement learning agent for Balatro"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.13"
 dependencies = [
     "balatrobot>=1.4.1",
+    "jackdaw @ file:///Users/gubrendon/jackdaw-balatro",
+    "gymnasium>=1.0",
+    "numpy>=1.24",
 ]
+
+[project.optional-dependencies]
+train = [
+    "sb3-contrib>=2.3",
+    "stable-baselines3>=2.3",
+    "tensorboard>=2.14",
+    "torch>=2.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["balatro_rl*"]
 
 [dependency-groups]
 dev = [
     "pytest>=9.0.2",
     "ruff>=0.15.5",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-v", "--tb=short"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
