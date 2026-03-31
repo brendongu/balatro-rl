@@ -36,10 +36,14 @@ class RewardConfig:
 
 
 class _ActionMaskMixin:
-    """Propagate action_masks() through wrapper chains."""
+    """Propagate action_masks() and action_table through wrapper chains."""
 
     def action_masks(self) -> np.ndarray:
         return self.env.action_masks()
+
+    @property
+    def action_table(self) -> list:
+        return self.env.action_table
 
 
 class ExpertRewardWrapper(_ActionMaskMixin, gymnasium.Wrapper):
@@ -313,6 +317,32 @@ class ObservationAugmentWrapper(_ActionMaskMixin, gymnasium.ObservationWrapper):
         return obs
 
 
+# ---------------------------------------------------------------------------
+# Action Info Wrapper
+# ---------------------------------------------------------------------------
+
+
+class ActionInfoWrapper(_ActionMaskMixin, gymnasium.Wrapper):
+    """Expose the gymnasium env's internal action table to heuristic agents.
+
+    The underlying ``BalatroGymnasiumEnv`` rebuilds ``_action_table`` every step
+    — a list of ``FactoredAction(action_type, card_target, entity_target)``.
+    This wrapper surfaces that list via a public ``action_table`` property so
+    heuristic policies can inspect what each flat action index means.
+    """
+
+    @property
+    def action_table(self) -> list:
+        env = self.env
+        while hasattr(env, "env"):
+            if hasattr(env, "_action_table"):
+                return env._action_table
+            env = env.env
+        return env._action_table
+
+
 def _inv_log_scale(v: float) -> float:
-    """Invert jackdaw's log_scale: log1p(x) / log1p(1e6)."""
-    return math.expm1(v * math.log1p(1e6))
+    """Invert jackdaw's log_scale: sign(x) * log2(1 + |x|)."""
+    if v >= 0:
+        return 2.0 ** v - 1.0
+    return -(2.0 ** (-v) - 1.0)

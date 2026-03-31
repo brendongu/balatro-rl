@@ -7,6 +7,7 @@ Usage::
 
     uv run python scripts/evaluate.py --model runs/balatro_ppo/balatro_ppo.zip
     uv run python scripts/evaluate.py --model runs/balatro_ppo/balatro_ppo.zip -n 200
+    uv run python scripts/evaluate.py --model runs/augmented/balatro_ppo.zip --augment-obs
 """
 
 from __future__ import annotations
@@ -15,9 +16,10 @@ import argparse
 from collections import defaultdict
 
 import numpy as np
-from jackdaw.env.game_interface import DirectAdapter
-from jackdaw.env.gymnasium_wrapper import BalatroGymnasiumEnv
 from sb3_contrib import MaskablePPO
+
+from balatro_rl.config import load_config
+from balatro_rl.env.factory import make_env
 
 
 def evaluate(
@@ -26,12 +28,18 @@ def evaluate(
     max_steps: int = 10_000,
     deterministic: bool = True,
     seed: int = 0,
+    augment_obs: bool = False,
+    config_path: str | None = None,
 ) -> dict[str, float]:
-    env = BalatroGymnasiumEnv(
-        adapter_factory=DirectAdapter,
-        max_steps=max_steps,
-        seed_prefix=f"EVAL_{seed}",
-        reward_shaping=False,
+    cfg = load_config(config_path)
+    cfg.env.max_steps = max_steps
+    cfg.env.reward_shaping = False
+
+    env = make_env(
+        cfg,
+        seed=seed,
+        seed_prefix="EVAL",
+        augment_obs=augment_obs,
     )
     model = MaskablePPO.load(model_path)
 
@@ -80,15 +88,24 @@ def main() -> None:
     parser.add_argument("--max-steps", type=int, default=10_000)
     parser.add_argument("--seed", type=int, default=1000)
     parser.add_argument("--stochastic", action="store_true")
+    parser.add_argument("--config", type=str, default=None, help="TOML config override file")
+    parser.add_argument(
+        "--augment-obs", action=argparse.BooleanOptionalAction, default=False,
+        help="Apply ObservationAugmentWrapper (must match training config)",
+    )
     args = parser.parse_args()
 
     print(f"Evaluating {args.model} over {args.n_episodes} episodes...")
+    if args.augment_obs:
+        print("  ObservationAugmentWrapper: enabled")
     results = evaluate(
         model_path=args.model,
         n_episodes=args.n_episodes,
         max_steps=args.max_steps,
         deterministic=not args.stochastic,
         seed=args.seed,
+        augment_obs=args.augment_obs,
+        config_path=args.config,
     )
 
     print("\nResults:")

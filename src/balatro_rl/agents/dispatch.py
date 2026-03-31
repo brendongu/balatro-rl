@@ -71,15 +71,16 @@ class PhaseDispatchAgent:
         self,
         obs: dict[str, np.ndarray],
         action_mask: np.ndarray,
+        action_table: list | None = None,
     ) -> int:
         phase = _detect_phase(obs)
 
         if phase == Phase.SELECTING_HAND:
-            return self.hand_policy.select_action(obs, action_mask)
+            return self.hand_policy.select_action(obs, action_mask, action_table=action_table)
         elif phase == Phase.SHOP:
-            return self.shop_policy.select_action(obs, action_mask)
+            return self.shop_policy.select_action(obs, action_mask, action_table=action_table)
         elif phase == Phase.BLIND_SELECT:
-            return self.blind_policy.select_action(obs, action_mask)
+            return self.blind_policy.select_action(obs, action_mask, action_table=action_table)
         elif self._fallback is not None:
             return self._fallback.select_action(obs, action_mask)
 
